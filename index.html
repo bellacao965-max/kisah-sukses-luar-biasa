@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kisah Sukses Final AI Hebat</title>
+  <meta name="description" content="Kisah Sukses Final AI Hebat - AI mentor bilingual, inspirasi, dan social feeds." />
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ff7a00">
+  <link rel="icon" href="/favicon-32.png">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="brand">
+        <img src="logo.png" alt="Kisah Sukses Final AI Hebat" class="logo">
+        <div>
+          <h1 class="title">Kisah Sukses Final AI Hebat</h1>
+          <p class="tag">Your AI success mentor — Mentor AI pribadi untuk inspirasi harian.</p>
+        </div>
+      </div>
+    </header>
+
+    <section class="controls">
+      <form id="searchForm" class="search" onsubmit="return doSearch()">
+        <input id="searchInput" placeholder="Search Google / Cari di Google..." />
+        <button type="submit">Search</button>
+      </form>
+      <div class="youtube-chooser">
+        <label>Video motivasi (random)</label>
+        <button id="newVid">Load Random</button>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="card chat-card" id="chatCard">
+        <div id="messages" class="messages"></div>
+        <form id="chatForm" class="chat-form">
+          <input id="prompt" placeholder="Tanya sesuatu / Ask something..." autocomplete="off">
+          <button type="submit">Kirim / Send</button>
+        </form>
+      </div>
+
+      <div class="card social">
+        <h2>Media Sosial & Video</h2>
+        <div class="video-wrap">
+          <h3>YouTube Inspirasi</h3>
+          <div id="ytContainer">
+            <iframe id="ytFrame" width="100%" height="215" src="https://www.youtube.com/embed/5qap5aO4i9A" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <div class="tiktok-wrap">
+          <h3>TikTok Feed (preview)</h3>
+          <div id="tiktokList" class="embed-list"></div>
+        </div>
+
+        <div class="insta-wrap">
+          <h3>Instagram Feed (preview)</h3>
+          <div id="instaList" class="embed-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© <span id="year"></span> Kisah Sukses Final AI Hebat — Built with ❤️</p>
+    </footer>
+  </main>
+
+  <script src="ai.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    function doSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      if (!q) return false;
+      const url = 'https://www.google.com/search?q=' + encodeURIComponent(q);
+      window.open(url, '_blank');
+      return false;
+    }
+
+    const vids = ['5qap5aO4i9A','dQw4w9WgXcQ','hLQl3WQQoQ0','s7L2PVdrb_8','2Lz0VOltZKA','K5KAc5CoCuk'];
+    document.getElementById('newVid').addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = vids[Math.floor(Math.random()*vids.length)];
+      document.getElementById('ytFrame').src = 'https://www.youtube.com/embed/' + id;
+    });
+
+    const tiktokSamples = ['7101234567890123456','7021234567890123456','6891234567890123456'];
+    const tiktokList = document.getElementById('tiktokList');
+    tiktokSamples.forEach(id => {
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.tiktok.com/embed/v2/' + id;
+      iframe.width = '100%';
+      iframe.height = '400';
+      iframe.setAttribute('allowfullscreen','');
+      iframe.loading = 'lazy';
+      tiktokList.appendChild(iframe);
+    });
+
+    const instaSamples = [
+      'https://www.instagram.com/p/CG0UU3rFv1A/embed',
+      'https://www.instagram.com/p/CQ0g-xyz/embed'
+    ];
+    const instaList = document.getElementById('instaList');
+    instaSamples.forEach(url => {
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.width = '100%';
+      iframe.height = '400';
+      iframe.frameBorder = 0;
+      iframe.loading = 'lazy';
+      instaList.appendChild(iframe);
+    });
+
+    const form = document.getElementById('chatForm');
+    const input = document.getElementById('prompt');
+    const messages = document.getElementById('messages');
+    function appendMessage(text, cls='ai') {
+      const d = document.createElement('div'); d.className = 'msg ' + cls; d.textContent = text; messages.appendChild(d); messages.scrollTop = messages.scrollHeight;
+    }
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const v = input.value.trim(); if (!v) return;
+      appendMessage(v,'user'); appendMessage('...','ai');
+      try {
+        const res = await KSPai.askAI(v, { max_tokens: 300 });
+        const aiBubbles = messages.querySelectorAll('.msg.ai');
+        if (aiBubbles.length) aiBubbles[aiBubbles.length-1].textContent = res;
+      } catch (err) {
+        const aiBubbles = messages.querySelectorAll('.msg.ai');
+        if (aiBubbles.length) aiBubbles[aiBubbles.length-1].textContent = 'Could not reach AI server.';
+      }
+      input.value='';
+    });
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(()=>console.log('SW registered'));
+    }
+  </script>
+</body>
+</html>

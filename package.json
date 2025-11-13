@@ -1,0 +1,13 @@
+{
+  "name": "kisah-sukses-final-ai-hebat",
+  "version": "1.0.0",
+  "description": "Kisah Sukses Final AI Hebat - Render-ready package (orange theme)",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
